@@ -1,0 +1,78 @@
+CREATE DATABASE paddle_court_db;
+USE paddle_court_db;
+
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    phone_number VARCHAR(15)
+);
+
+CREATE TABLE courts (
+    court_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    hourly_rate DECIMAL(5,2) NOT NULL
+);
+
+CREATE TABLE bookings (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    court_id INT,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status ENUM('pending','confirmed','cancelled') NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (court_id) REFERENCES courts(court_id)
+);
+
+CREATE TABLE payments (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT,
+    amount DECIMAL(6,2) NOT NULL,
+    payment_date DATE NOT NULL,
+    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)
+);
+
+-- 1. INSERT DUMMY USERS (10 Users)
+INSERT INTO users (full_name, email, phone_number) VALUES 
+('Ahmad Zaki', 'zaki@email.com', '081234567890'),
+('Siti Aminah', 'siti@email.com', '081234567891'),
+('Budi Santoso', 'budi@email.com', '081234567892'),
+('Dewi Lestari', 'dewi@email.com', '081234567893'),
+('Rian Hidayat', 'rian@email.com', '081234567894'),
+('Linda Putri', 'linda@email.com', '081234567895'),
+('Agus Wijaya', 'agus@email.com', '081234567896'),
+('Maya Sari', 'maya@email.com', '081234567897'),
+('Eko Prasetyo', 'eko@email.com', '081234567898'),
+('Fitriani', 'fitri@email.com', '081234567899');
+
+-- 2. INSERT DUMMY COURTS (4 Courts)
+INSERT INTO courts (name, hourly_rate) VALUES 
+('Center Court (Indoor)', 25.00),
+('Blue Arena (Outdoor)', 15.00),
+('Sunset Padel', 20.00),
+('Pro Court 4', 22.50);
+
+-- 3. INSERT DUMMY BOOKINGS (10 Bookings)
+-- Note: Assumes user_id 1-10 and court_id 1-4 exist
+INSERT INTO bookings (user_id, court_id, start_time, end_time, status) VALUES 
+(1, 1, '2023-10-01 08:00:00', '2023-10-01 09:00:00', 'confirmed'),
+(2, 1, '2023-10-01 09:00:00', '2023-10-01 10:00:00', 'confirmed'),
+(3, 2, '2023-10-01 16:00:00', '2023-10-01 18:00:00', 'pending'),
+(4, 3, '2023-10-02 10:00:00', '2023-10-02 11:00:00', 'confirmed'),
+(5, 4, '2023-10-02 19:00:00', '2023-10-02 21:00:00', 'cancelled'),
+(6, 2, '2023-10-03 07:00:00', '2023-10-03 08:00:00', 'confirmed'),
+(7, 1, '2023-10-03 14:00:00', '2023-10-03 15:00:00', 'pending'),
+(8, 3, '2023-10-04 17:00:00', '2023-10-04 18:00:00', 'confirmed'),
+(9, 4, '2023-10-04 20:00:00', '2023-10-04 21:00:00', 'confirmed'),
+(10, 1, '2023-10-05 09:00:00', '2023-10-05 11:00:00', 'confirmed');
+
+-- 4. INSERT DUMMY PAYMENTS (Matching the confirmed bookings)
+INSERT INTO payments (booking_id, amount, payment_date) VALUES 
+(1, 25.00, '2023-10-01'),
+(2, 25.00, '2023-10-01'),
+(4, 20.00, '2023-10-02'),
+(6, 15.00, '2023-10-03'),
+(8, 20.00, '2023-10-04'),
+(9, 22.50, '2023-10-04'),
+(10, 50.00, '2023-10-05');
